@@ -18,10 +18,24 @@ moto.decay_mode = DECAY_MODE
 def hardStop(): 
     moto.throttle = 0
     
-def acclDeccl(currNotch, newNotch, currDir):
+def speed(newValue):
+    theStep = 0.2
 
-    if(currNotch == newNotch):
-        return moto.throttle
+    currThrottle = moto.throttle
+    newThrottle = newValue / 100
     
+
+    if(currThrottle == newThrottle):
+        return currThrottle
+
+    isAcceleration = currThrottle < newThrottle
+
+    if not isAcceleration: 
+        theStep = theStep * -1
+
+
+    for duty_cycle in range(newThrottle, currThrottle, theStep):
+        moto.throttle = duty_cycle
+        time.sleep(0.2)
     # need to: convert notch to 0 to 1.0 for throttle
     # need to: convert notch result to forward or backward

@@ -9,8 +9,11 @@ from adafruit_httpserver.response import Response
 import adafruit_httpserver.methods as Methods
 import adafruit_httpserver.mime_types as MT
 
-from templates.home import home
 from templates.controls import controls
+
+from src.controls.controls import setReverser
+from src.controls.controls import setThrottle
+from src.controls.controls import eStop
 
 print()
 print("Connection to WiFi")
@@ -35,6 +38,7 @@ mdns_server.instance_name="009-rc"
 pool = socketpool.SocketPool(wifi.radio)
 server = Server(pool)
 
+#page routes
 @server.route("/", Methods.GET)
 def rootHandler(request: Request):
     with Response(
@@ -42,6 +46,32 @@ def rootHandler(request: Request):
         content_type=MT.MIMETypes.REGISTERED.get('html')
     ) as response:
         response.send(f"{controls}")
+
+#api routes
+@server.route("/reverser/<rev_param>", Methods.POST)
+def reverserHandler(request: Request, rev_param):
+    setReverser(rev_param)
+    with Response(
+        request,
+        status=[204, "No Content"]
+    ) as response:
+        response.send()
+@server.route("/notch/<notch_param>", Methods.POST)
+def notchHandler(request: Request, notch_param):
+    setThrottle(notch_param)
+    with Response(
+        request,
+        status=[204, "No Content"]
+    ) as response:
+        response.send()
+@server.route("/estop", Methods.POST)
+def eStopHandler(request: Request):
+    eStop()
+    with Response(
+        request,
+        status=[204, "No Content"]
+    ) as response:
+        response.send()
 
 print(f"Listening on http://{wifi.radio.ipv4_address}:80")
 server.serve_forever(str(wifi.radio.ipv4_address))

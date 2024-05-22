@@ -7,7 +7,8 @@
     "python.analysis.extraPaths": [
         "/Users/jvorwald/.vscode/extensions/joedevivo.vscode-circuitpython-0.2.0-darwin-arm64/boards/0x239A/0x811A",
         "/Users/jvorwald/.vscode/extensions/joedevivo.vscode-circuitpython-0.2.0-darwin-arm64/stubs",
-        "/Users/jvorwald/Library/Application Support/Code/User/globalStorage/joedevivo.vscode-circuitpython/bundle/20240519/adafruit-circuitpython-bundle-py-20240519/lib"
+        "/Users/jvorwald/Library/Application Support/Code/User/globalStorage/joedevivo.vscode-circuitpython/bundle/20240522/adafruit-circuitpython-bundle-py-20240522/lib",
+        "./templages/pages"
     ],
     "circuitpython.board.version": null,
     "circuitpython.board.vid": "0x239A",

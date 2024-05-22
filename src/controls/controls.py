@@ -1,28 +1,33 @@
-from motor.motor import MotorService
-from reverserEnum import ReverserEnum
+from src.motorService.motor import MotorService
+from src.controls.reverserEnum import ReverserEnum
 
 class ControlClass:
-    def __init__(self, dir = ReverserEnum.NUETRAL):
-        self.direction = dir
-        self.mc = MotorService
-        self.revEnum = ReverserEnum
+    direction = ReverserEnum.NUETRAL
+    mc = MotorService()
 
     def getReverser(self): 
         return self.direction
 
     def setReverser(self, new):
-        self.direction = new
+        self.direction = int(new)
         return self.direction
     
     def setThrottle(self, newSpeed):
-        if self.direction == self.revEnum.REVERSE: 
-            self.mc.speed(-newSpeed)
-        elif self.direction == self.revEnum.FORWARD:
-            self.mc.speed(newSpeed)  
+        convSpeed = int(newSpeed)
+        result: float | None
+        print(int(ReverserEnum.REVERSE))
+        if self.direction == int(ReverserEnum.REVERSE):
+            print('reversing!') 
+            result = self.mc.speed(-convSpeed)
+        elif self.direction == int(ReverserEnum.FORWARD):
+            print('forward!')
+            result = self.mc.speed(convSpeed)  
         else:
             #assume nuetral
-            self.mc.speed(0)
-            
+            print('nuetral')
+            result = self.mc.speed(None)
+        return result
+   
     def eStop(self):
         self.mc.hardStop()
         return 'stopped'

@@ -14,26 +14,22 @@ from templates.controls import controls
 
 from src.controls.controls import ControlClass
 
+
+ap_ssid = "rc-wifi"
+ap_password = "password"
+
 controlClass = ControlClass()
 print("Starting Up")
 print()
-print("Connection to WiFi")
 
-# need to come back and make this dynamic...
-# set static IP address
-ipv4 = ipaddress.IPv4Address("192.168.0.89")
-netmask = ipaddress.IPv4Address("255.255.255.0")
-gateway = ipaddress.IPv4Address("192.168.2.1")
-wifi.radio.set_ipv4_address(ipv4=ipv4, netmask=netmask, gateway=gateway)
-# Connect to ssid
-wifi.radio.connect(
-    os.getenv("CIRCUITPY_WIFI_SSID"), os.getenv("CIRCUITPY_WIFI_PASSWORD")
-)
-print("Connected to WiFi")
+wifi.radio.start_ap(ssid=ap_ssid, channel=1, password=ap_password)
+
+# Print access point settings
+print("Access point created with SSID: {}, password: {}".format(ap_ssid, ap_password))
+print("My IP address is", str(wifi.radio.ipv4_address_ap))
 
 mdns_server = mdns.Server(wifi.radio)
-mdns_server.hostname = "009-rc"
-mdns_server.instance_name = "009-rc"
+mdns_server.hostname = "constance"
 mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=5000)
 
 pool = socketpool.SocketPool(wifi.radio)
@@ -43,7 +39,7 @@ server = Server(pool, "/rc", debug=True)
 @server.route("/", Methods.GET)
 def rootHandler(request: Request):
     return FileResponse(
-        request, 
+        request,
         filename="controls.html",
         root_path="/markup",
         content_type="text/html",
@@ -84,5 +80,5 @@ def eStopHandler(request: Request):
         status=Status(200, "ok")
     )
 
-print(f"Listening on http://{wifi.radio.ipv4_address}:5000")
-server.serve_forever(str(wifi.radio.ipv4_address))
+print(f"Listening on http://{str(wifi.radio.ipv4_address_ap)}:80")
+server.serve_forever(str(wifi.radio.ipv4_address_ap), 80)
